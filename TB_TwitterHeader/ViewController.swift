@@ -2,9 +2,7 @@
 //  ViewController.swift
 //  TB_TwitterHeader
 //
-//  Created by Yari D'areglia on 17/01/15.
-//  Copyright (c) 2015 Yari D'areglia. All rights reserved.
-//
+//  Created by Yari D'areglia on 08/12/2016.
 
 import UIKit
 
@@ -13,7 +11,7 @@ let offset_B_LabelHeader:CGFloat = 95.0 // At this offset the Black label reache
 let distance_W_LabelHeader:CGFloat = 35.0 // The distance between the bottom of the Header and the top of the White Label
 
 class ViewController: UIViewController, UIScrollViewDelegate {
-
+    
     @IBOutlet var scrollView:UIScrollView!
     @IBOutlet var avatarImage:UIImageView!
     @IBOutlet var header:UIView!
@@ -26,32 +24,32 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         scrollView.delegate = self
     }
-
-    override func viewDidAppear(animated: Bool) {
+    
+    override func viewDidAppear(_ animated: Bool) {
         
         // Header - Image
         
         headerImageView = UIImageView(frame: header.bounds)
         headerImageView?.image = UIImage(named: "header_bg")
-        headerImageView?.contentMode = UIViewContentMode.ScaleAspectFill
+        headerImageView?.contentMode = UIViewContentMode.scaleAspectFill
         header.insertSubview(headerImageView, belowSubview: headerLabel)
         
         // Header - Blurred Image
         
         headerBlurImageView = UIImageView(frame: header.bounds)
-        headerBlurImageView?.image = UIImage(named: "header_bg")?.blurredImageWithRadius(10, iterations: 20, tintColor: UIColor.clearColor())
-        headerBlurImageView?.contentMode = UIViewContentMode.ScaleAspectFill
+        headerBlurImageView?.image = UIImage(named: "header_bg")?.blurredImage(withRadius: 10, iterations: 20, tintColor: UIColor.clear)
+        headerBlurImageView?.contentMode = UIViewContentMode.scaleAspectFill
         headerBlurImageView?.alpha = 0.0
         header.insertSubview(headerBlurImageView, belowSubview: headerLabel)
-    
+        
         header.clipsToBounds = true
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let offset = scrollView.contentOffset.y
         var avatarTransform = CATransform3DIdentity
@@ -68,13 +66,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             
             header.layer.transform = headerTransform
         }
-        
+            
         // SCROLL UP/DOWN ------------
             
         else {
             
             // Header -----------
-
+            
             headerTransform = CATransform3DTranslate(headerTransform, 0, max(-offset_HeaderStop, -offset), 0)
             
             //  ------------ Label
@@ -85,7 +83,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             //  ------------ Blur
             
             headerBlurImageView?.alpha = min (1.0, (offset - offset_B_LabelHeader)/distance_W_LabelHeader)
-
+            
             // Avatar -----------
             
             let avatarScaleFactor = (min(offset_HeaderStop, offset)) / avatarImage.bounds.height / 1.4 // Slow down the animation
@@ -113,9 +111,14 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @IBAction func shamelessActionThatBringsYouToMyTwitterProfile() {
-        
-        if !UIApplication.sharedApplication().openURL(NSURL(string:"twitter://user?screen_name=bitwaker")!){
-            UIApplication.sharedApplication().openURL(NSURL(string:"https://twitter.com/bitwaker")!)
+        if UIApplication.shared.canOpenURL(URL(string:"twitter://user?screen_name=bitwaker")!){
+            UIApplication.shared.open(URL(string:"twitter://user?screen_name=bitwaker")!)
+        }else{
+            UIApplication.shared.open(URL(string:"https://twitter.com/bitwaker")!)
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return UIStatusBarStyle.lightContent
     }
 }
